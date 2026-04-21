@@ -3,15 +3,16 @@ const app = express();
 const nodemailer = require("nodemailer");
 const cors = require("cors");
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
-app.use(cors({
-  origin: "http://localhost:5173",
-  methods: ["GET", "POST", "OPTIONS"],
-  allowedHeaders: ["Content-Type"],
-}));
+// app.use(cors({
+//   origin: "http://localhost:5173",
+//   methods: ["GET", "POST", "OPTIONS"],
+//   allowedHeaders: ["Content-Type"],
+// }));
+app.use(cors());
 
 // 🔴 THIS LINE FIXES YOUR ISSUE
 // app.options("*", cors());
@@ -31,17 +32,17 @@ app.post("/data", async (req, res) => {
     if (!user.privacy) {
       return res.status(400).json({ message: "Privacy not accepted" });
     }
-    
+
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: "coder20061704@gmail.com",
-        pass: "nbeqgx cdyv suln py",
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
       },
     });
 
     await transporter.sendMail({
-      from: "Form Bot <coder20061704@gmail.com>",
+      from: `Form Bot <${process.env.EMAIL_USER}>`,
       to: user.email,
       subject: "Form Submission Received",
       text: JSON.stringify(user, null, 2),
@@ -50,7 +51,6 @@ app.post("/data", async (req, res) => {
     res.status(200).json({
       message: "Form submitted & email sent successfully",
     });
-
   } catch (err) {
     console.error("SERVER ERROR:", err);
     res.status(500).json({ message: "Server error" });
@@ -59,8 +59,4 @@ app.post("/data", async (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`✅ Backend running on http://localhost:${PORT}`);
-});
-
-app.get("/", (req,res)=>{
- res.send("Backend Running");
 });
