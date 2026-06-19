@@ -42,10 +42,19 @@ app.post("/data", async (req, res) => {
     });
 
     await transporter.sendMail({
-      from: `Form Bot <${process.env.EMAIL_USER}>`,
-      to: user.email,
-      subject: "Form Submission Received",
-      text: JSON.stringify(user, null, 2),
+      from: `${user.name} <${process.env.EMAIL_USER}>`,
+      to: process.env.EMAIL_USER, // tere paas aayegi inquiry
+      replyTo: user.email, // reply karo toh client ko jaayegi
+      subject: `New Inquiry from ${user.name}`,
+      text: `
+Name: ${user.name}
+Company: ${user.company}
+Goal: ${user.goal}
+Date: ${user.date}
+Budget: ${user.budget}
+Email: ${user.email}
+Details: ${user.details}
+  `,
     });
 
     res.status(200).json({
