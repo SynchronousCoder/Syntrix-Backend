@@ -35,12 +35,18 @@ app.post("/data", async (req, res) => {
     }
 
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: "smtp.gmail.com",
+      port: 465,
+      secure: true,
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
       },
+      connectionTimeout: 10000,
     });
+
+    console.log("1. Request received");
+    console.log("2. Transport created");
 
     await transporter.sendMail({
       from: `${user.name} <${process.env.EMAIL_USER}>`,
@@ -58,12 +64,14 @@ Details: ${user.details}
   `,
     });
 
+    console.log("3. Mail sent");
+
     res.status(200).json({
       message: "Form submitted & email sent successfully",
     });
   } catch (err) {
-    console.error("SERVER ERROR:", err);
-    res.status(500).json({ message: "Server error" });
+    console.error("SERVER ERROR FULL:", err.message);
+    res.status(500).json({ message: err.message });
   }
 });
 
