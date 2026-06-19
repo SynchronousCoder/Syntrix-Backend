@@ -22,49 +22,57 @@ app.get("/", (req, res) => {
 });
 
 app.post("/data", async (req, res) => {
-  try {
-    const user = req.body;
+  console.log(req.body);
 
-    if (!user.email || !user.email.includes("@") || !user.email.includes(".")) {
-      return res.status(400).json({ message: "Invalid email address" });
-    }
-
-    if (!user.privacy) {
-      return res.status(400).json({ message: "Privacy not accepted" });
-    }
-
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
-
-    await transporter.sendMail({
-      from: `${user.name} <${process.env.EMAIL_USER}>`,
-      to: process.env.EMAIL_USER, // tere paas aayegi inquiry
-      replyTo: user.email, // reply karo toh client ko jaayegi
-      subject: `New Inquiry from ${user.name}`,
-      text: `
-Name: ${user.name}
-Company: ${user.company}
-Goal: ${user.goal}
-Date: ${user.date}
-Budget: ${user.budget}
-Email: ${user.email}
-Details: ${user.details}
-  `,
-    });
-
-    res.status(200).json({
-      message: "Form submitted & email sent successfully",
-    });
-  } catch (err) {
-    console.error("SERVER ERROR:", err);
-    res.status(500).json({ message: "Server error" });
-  }
+  return res.status(200).json({
+    message: "Backend working"
+  });
 });
+
+// app.post("/data", async (req, res) => {
+//   try {
+//     const user = req.body;
+
+//     if (!user.email || !user.email.includes("@") || !user.email.includes(".")) {
+//       return res.status(400).json({ message: "Invalid email address" });
+//     }
+
+//     if (!user.privacy) {
+//       return res.status(400).json({ message: "Privacy not accepted" });
+//     }
+
+//     const transporter = nodemailer.createTransport({
+//       service: "gmail",
+//       auth: {
+//         user: process.env.EMAIL_USER,
+//         pass: process.env.EMAIL_PASS,
+//       },
+//     });
+
+//     await transporter.sendMail({
+//       from: `${user.name} <${process.env.EMAIL_USER}>`,
+//       to: process.env.EMAIL_USER, // tere paas aayegi inquiry
+//       replyTo: user.email, // reply karo toh client ko jaayegi
+//       subject: `New Inquiry from ${user.name}`,
+//       text: `
+// Name: ${user.name}
+// Company: ${user.company}
+// Goal: ${user.goal}
+// Date: ${user.date}
+// Budget: ${user.budget}
+// Email: ${user.email}
+// Details: ${user.details}
+//   `,
+//     });
+
+//     res.status(200).json({
+//       message: "Form submitted & email sent successfully",
+//     });
+//   } catch (err) {
+//     console.error("SERVER ERROR:", err);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// });
 
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`✅ Backend running on ${PORT}`);
